@@ -194,7 +194,7 @@ int main()
 		return -1;
 	}
 
-	std::cout << "List of WFP filter drivers (import FWPKCLNT!FwpsCalloutRegister)" << std::endl;
+	std::cout << "List of WFP filter drivers (import FWPKCLNT!FwpsCalloutRegister):" << std::endl << std::endl;
 
 	// Iterate over all system modules
 	for (ULONG i = 0; i < mod_info->ModulesCount; i++)
