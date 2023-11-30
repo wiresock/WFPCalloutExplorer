@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+' # This will match tags like 5.3.2
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        platform: [Win32, x64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up MSVC v143 - VS 2022 C++ x64/x86 build tools
+        uses: actions/setup-msbuild@v1
+        with:
+          vs-version: '17.0'
+
+      - name: Install vcpkg dependencies
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git
+          .\vcpkg\bootstrap-vcpkg.bat
+          .\vcpkg\vcpkg install pe-parse:x64-windows pe-parse:x86-windows pe-parse:arm64-windows pe-parse:x64-windows-static pe-parse:x86-windows-static pe-parse:arm64-windows-static
+
+      - name: Build (CMake)
+        run: |
+          mkdir build
+          cd build
+          cmake -A ${{ matrix.platform }} ..
+          cmake --build . --config Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: wfpcalloutexplorer-${{ matrix.platform }}
+          path: build/Release/*.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body: "Release of WFPCalloutExplorer"
+          files: |
+            artifacts/wfpcalloutexplorer-Win32.exe
+            artifacts/wfpcalloutexplorer-x64.exe
