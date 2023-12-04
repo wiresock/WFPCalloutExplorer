@@ -27,15 +27,15 @@ jobs:
           .\vcpkg\bootstrap-vcpkg.bat
           if ("${{ matrix.platform }}" -eq "x86")
           {
-            .\vcpkg\vcpkg install pe-parse:x86-windows-static
+            .\vcpkg\vcpkg install pe-parse:x86-windows pe-parse:x86-windows-static
           }
           elseif ("${{ matrix.platform }}" -eq "x64")
           {
-            .\vcpkg\vcpkg install pe-parse:x64-windows-static
+            .\vcpkg\vcpkg install pe-parse:x64-windows pe-parse:x64-windows-static
           }
           else
           {
-            .\vcpkg\vcpkg install pe-parse:arm64-windows-static
+            .\vcpkg\vcpkg install pe-parse:arm64-windows pe-parse:arm64-windows-static
           }
 
       - name: Build with MSBuild
