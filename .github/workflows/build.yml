@@ -56,20 +56,21 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
-
+  
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
           body: "Release of WFPCalloutExplorer"
-
-      - name: Upload Release Asset
+  
+      - name: Upload Release Asset x86
+        if: contains(github.ref, 'x86') && contains(fromJson(needs.build.outputs.artifacts.uploaded-artifact-names), 'wfpcalloutexplorer-x86')
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,8 +79,9 @@ jobs:
           asset_path: ./artifacts/wfpcalloutexplorer-x86.exe
           asset_name: wfpcalloutexplorer-x86.exe
           asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset
+  
+      - name: Upload Release Asset x64
+        if: contains(github.ref, 'x64') && contains(fromJson(steps.artifacts.outputs.uploaded-artifact-names), 'wfpcalloutexplorer-x64')
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -88,8 +90,9 @@ jobs:
           asset_path: ./artifacts/wfpcalloutexplorer-x64.exe
           asset_name: wfpcalloutexplorer-x64.exe
           asset_content_type: application/octet-stream
-
-      - name: Upload Release Asset
+  
+      - name: Upload Release Asset arm64
+        if: contains(github.ref, 'arm64') && contains(fromJson(steps.artifacts.outputs.uploaded-artifact-names), 'wfpcalloutexplorer-arm64')
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,3 +101,4 @@ jobs:
           asset_path: ./artifacts/wfpcalloutexplorer-arm64.exe
           asset_name: wfpcalloutexplorer-arm64.exe
           asset_content_type: application/octet-stream
+          
