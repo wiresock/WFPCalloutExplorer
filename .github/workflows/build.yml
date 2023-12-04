@@ -10,12 +10,12 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        platform: [Win32, x64]
+        platform: [Win32, x64, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up MSVC v143 - VS 2022 C++ x64/x86 build tools
+      - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
         with:
           vs-version: '17.0'
@@ -24,14 +24,18 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
-          .\vcpkg\vcpkg install pe-parse:x64-windows pe-parse:x86-windows pe-parse:arm64-windows pe-parse:x64-windows-static pe-parse:x86-windows-static pe-parse:arm64-windows-static
+          if "${{ matrix.platform }}" == "Win32" 
+          then
+            .\vcpkg\vcpkg install pe-parse:x86-windows-static
+          elif "${{ matrix.platform }}" == "x64"
+          then
+            .\vcpkg\vcpkg install pe-parse:x64-windows-static
+          else
+            .\vcpkg\vcpkg install pe-parse:arm64-windows-static
+          fi
 
-      - name: Build (CMake)
-        run: |
-          mkdir build
-          cd build
-          cmake -A ${{ matrix.platform }} ..
-          cmake --build . --config Release
+      - name: Build with MSBuild
+        run: msbuild /m /p:Configuration=Release /p:Platform=${{ matrix.platform }} WFPCalloutExplorer.sln
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
@@ -65,7 +69,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/wfpcalloutexplorer-Win32.exe
           asset_name: wfpcalloutexplorer-Win32.exe
           asset_content_type: application/octet-stream
@@ -78,4 +82,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./artifacts/wfpcalloutexplorer-x64.exe
           asset_name: wfpcalloutexplorer-x64.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/wfpcalloutexplorer-arm64.exe
+          asset_name: wfpcalloutexplorer-arm64.exe
           asset_content_type: application/octet-stream
