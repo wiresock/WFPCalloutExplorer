@@ -25,7 +25,7 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
-          if ("${{ matrix.platform }}" -eq "Win32")
+          if ("${{ matrix.platform }}" -eq "x86")
           {
             .\vcpkg\vcpkg install pe-parse:x86-windows-static
           }
@@ -74,8 +74,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/wfpcalloutexplorer-Win32.exe
-          asset_name: wfpcalloutexplorer-Win32.exe
+          asset_path: ./artifacts/wfpcalloutexplorer-x86.exe
+          asset_name: wfpcalloutexplorer-x86.exe
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset
