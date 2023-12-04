@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: wfpcalloutexplorer-${{ matrix.platform }}
-          path: build/Release/*.exe
+          path: ${{ matrix.platform }}/Release/*.exe
 
   release:
     needs: build
