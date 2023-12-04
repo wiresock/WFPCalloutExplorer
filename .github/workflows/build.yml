@@ -21,18 +21,22 @@ jobs:
           vs-version: '17.0'
 
       - name: Install vcpkg dependencies
+        shell: pwsh
         run: |
           git clone https://github.com/Microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
-          if "${{ matrix.platform }}" == "Win32" 
-          then
+          if ("${{ matrix.platform }}" -eq "Win32")
+          {
             .\vcpkg\vcpkg install pe-parse:x86-windows-static
-          elif "${{ matrix.platform }}" == "x64"
-          then
+          }
+          elseif ("${{ matrix.platform }}" -eq "x64")
+          {
             .\vcpkg\vcpkg install pe-parse:x64-windows-static
+          }
           else
+          {
             .\vcpkg\vcpkg install pe-parse:arm64-windows-static
-          fi
+          }
 
       - name: Build with MSBuild
         run: msbuild /m /p:Configuration=Release /p:Platform=${{ matrix.platform }} WFPCalloutExplorer.sln
