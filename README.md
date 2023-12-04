@@ -16,6 +16,8 @@ vcpkg install pe-parse:x64-windows pe-parse:x86-windows pe-parse:arm64-windows p
 1. Build the `WFPCalloutExplorer` project using Visual Studio 2022.
 2. Run the executable. The program will dynamically load the `ntdll.dll`, query system modules, and inspect each module to determine if it is a WFP callout filter driver.
 
+Alternatively, precompiled binaries for `x86`, `x64`, and `arm64` platforms are available in the [Releases section](https://github.com/wiresock/WFPCalloutExplorer/releases) of this repository.
+
 ## Functionality
 
 - Dynamically retrieves system modules using the `NtQuerySystemInformation` function.
