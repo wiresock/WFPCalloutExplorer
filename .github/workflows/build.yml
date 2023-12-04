@@ -25,6 +25,7 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
+          ./vcpkg integrate install
           if ("${{ matrix.platform }}" -eq "x86")
           {
             .\vcpkg\vcpkg install pe-parse:x86-windows pe-parse:x86-windows-static
