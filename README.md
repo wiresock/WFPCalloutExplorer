@@ -1,6 +1,6 @@
 # WFPCalloutExplorer
 
-`WFPCalloutExplorer` is a tool designed to identify and explore Windows Filtering Platform (WFP) callout filter drivers by checking if they import the `FWPKCLNT!FwpsCalloutRegister` function.
+`WFPCalloutExplorer` is a specialized tool meticulously designed to identify currently loaded Windows Filtering Platform (WFP) callout filter drivers. It achieves this objective by scrutinizing whether these drivers import the vital `FWPKCLNT!FwpsCalloutRegister` function.
 
 ## Prerequisites
 
